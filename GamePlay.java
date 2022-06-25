@@ -18,25 +18,34 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
 	private boolean play = false;
 
 	private int score = 0;
-	private int totalBricks = 21;
+	private int totalBricks;
 
 	private Timer timer;
 
-	private int delay = 8;
+	private int LevelDelay = 0;
 	private int playerX = 310;
-	private int ballposX = 120;
-	private int ballposY = 350;
+	private int ballposX = 340;
+	private int ballposY = 530;
 	private int ballXdir = -1;
 	private int ballYdir = -2;
+	private int rowNo;
+	private int colNo;
+	private int batSize;
 
 	private MapGenerator map;
 
-	GamePlay() {
-		map = new MapGenerator(3, 7);
+	GamePlay(int rowNo, int colNo, int batSize, int ballSpeed) {
+		// row and column
+		this.rowNo = rowNo;
+		this.colNo = colNo;
+		this.batSize = batSize;
+		LevelDelay = ballSpeed;
+		map = new MapGenerator(rowNo, colNo);
+		this.totalBricks = rowNo * colNo;
 		addKeyListener(this);
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
-		timer = new Timer(delay, this);
+		timer = new Timer(LevelDelay, this);
 		timer.start();
 
 	}
@@ -44,7 +53,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
 	@Override
 	public void paint(Graphics g) {
 		g.setColor(Color.white);
-		g.fillRect(1, 1, 692, 592);
+		g.fillRect(1, 1, 1092, 992);
 
 		map.draw((Graphics2D) g);
 
@@ -55,7 +64,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
 		g.fillRect(691, 0, 3, 592);
 
 		g.setColor(Color.blue);
-		g.fillRect(playerX, 550, 100, 8);
+		g.fillRect(playerX, 550, batSize, 11);
 
 		g.setColor(Color.green);
 		g.fillOval(ballposX, ballposY, 20, 20);
@@ -91,6 +100,7 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
 			g.drawString("Press Enter to Restart.", 230, 350);
 		}
 
+		// garbage collection to make program more efficient
 		g.dispose();
 
 	}
@@ -180,13 +190,15 @@ public class GamePlay extends JPanel implements KeyListener, ActionListener {
 		if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
 			if (!play) {
 				play = true;
-				ballposX = 120;
-				ballposY = 350;
+				playerX = 310;
+				ballposX = 340;
+				ballposY = 530;
 				ballXdir = -1;
 				ballYdir = -2;
 				score = 0;
-				totalBricks = 21;
-				map = new MapGenerator(3, 7);
+
+				map = new MapGenerator(rowNo, colNo);
+				totalBricks = rowNo * colNo;
 
 				repaint();
 			}
